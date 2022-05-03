@@ -10,8 +10,8 @@ contract Election {
     }
 
     struct Proposal {
-        bytes32 name; // short name (up to 32 bytes)
-        uint256 voteCount; // number of accumulated votes
+        bytes32 name;
+        uint256 voteCount;
     }
 
     address owner;
