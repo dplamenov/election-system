@@ -56,4 +56,8 @@ contract Election {
     function winnerName() public view returns (bytes32 winnerName_) {
         winnerName_ = proposals[winningProposal()].name;
     }
+
+    function getProposals() public view returns (Proposal[] memory) {
+        return proposals;
+    }
 }
