@@ -14,7 +14,7 @@ contract Election {
         uint256 voteCount;
     }
 
-    address owner;
+    address public owner;
     mapping(address => Voter) voters;
     Proposal[] proposals;
 

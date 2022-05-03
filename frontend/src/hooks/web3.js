@@ -27,4 +27,5 @@ function useContract(contractName) {
   return new ethers.Contract(contracts[contractName].address, contracts[contractName].abi, signer);
 }
 
+
 export { useProvider, useContract };

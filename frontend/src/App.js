@@ -4,9 +4,10 @@ import {useContract, useProvider} from './hooks/web3';
 import {ethers} from 'ethers';
 
 function App() {
-  const provider = useProvider();
   const electionContract = useContract('election');
   const [proposals, setProposals] = useState([]);
+  const [currentAccount, setCurrentAccount] = useState()
+  const [isOwner, setIsOwner] = useState(false);
 
   const getProposals = async () => {
     const proposals = await electionContract.getProposals();
@@ -14,11 +15,26 @@ function App() {
     setProposals(proposals);
   };
 
+  const giveRightToVoteHandler = async (e) => {
+    console.log(isOwner);
+    e.preventDefault();
+    const {value: address} = e.target.address;
+    electionContract.giveRightToVote(address);
+  }
+  
   useEffect(() => {
-    if(electionContract) {
-      getProposals();
-    }
-  }, []);
+    window.ethereum.request({ method: 'eth_requestAccounts' })
+      .then(result => {
+        setCurrentAccount(result[0]);
+
+        if (electionContract) {
+          getProposals();
+          electionContract.owner().then(owner => {
+            setIsOwner(owner.toLowerCase() === result[0]);
+          });
+        }
+      });
+  }, [])
 
   return (
     <div className="App">
@@ -26,6 +42,13 @@ function App() {
       {proposals.map(p => {
         return <p key={p.name}>{ethers.utils.parseBytes32String(p.name)}</p>
       })}
+      <hr></hr>
+      {isOwner && <div>
+        <form onSubmit={giveRightToVoteHandler}>
+          <input type="text" placeholder="address" id="address" name="address" />
+          <button>Give right</button>
+        </form>
+      </div>}
     </div>
   );
 }
