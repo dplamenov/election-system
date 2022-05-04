@@ -9,19 +9,6 @@ function App() {
   const [currentAccount, setCurrentAccount] = useState()
   const [isOwner, setIsOwner] = useState(false);
 
-  const getProposals = async () => {
-    const proposals = await electionContract.getProposals();
-    console.log(proposals);
-    setProposals(proposals);
-  };
-
-  const giveRightToVoteHandler = async (e) => {
-    console.log(isOwner);
-    e.preventDefault();
-    const {value: address} = e.target.address;
-    electionContract.giveRightToVote(address);
-  }
-  
   useEffect(() => {
     window.ethereum.request({ method: 'eth_requestAccounts' })
       .then(result => {
@@ -36,11 +23,35 @@ function App() {
       });
   }, [])
 
+  const getProposals = async () => {
+    const proposals = await electionContract.getProposals();
+    console.log(proposals);
+    setProposals(proposals);
+  };
+
+  const giveRightToVoteHandler = async (e) => {
+    console.log(isOwner);
+    e.preventDefault();
+    const {value: address} = e.target.address;
+    electionContract.giveRightToVote(address);
+  }
+
+  const voteHandler = (key) => {
+    return () => {
+      electionContract.vote(key).then(() => {
+        console.log(key);
+      });
+    }
+  };
+
   return (
     <div className="App">
       <h1>Proposals</h1>
-      {proposals.map(p => {
-        return <p key={p.name}>{ethers.utils.parseBytes32String(p.name)}</p>
+      {proposals.map((p, key) => {
+        return <div key={key}>
+          {ethers.utils.parseBytes32String(p.name)}
+          <button onClick={voteHandler(key)}>Vote</button>
+        </div>
       })}
       <hr></hr>
       {isOwner && <>
@@ -48,7 +59,7 @@ function App() {
           <input type="text" placeholder="address" id="address" name="address" />
           <button>Give right</button>
         </form>
-        
+        <button>Get result</button>
       </>}
     </div>
   );
