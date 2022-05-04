@@ -8,6 +8,7 @@ function App() {
   const [proposals, setProposals] = useState([]);
   const [currentAccount, setCurrentAccount] = useState()
   const [isOwner, setIsOwner] = useState(false);
+  const [isVoted, setIsVoted] = useState(false); 
 
   useEffect(() => {
     window.ethereum.request({ method: 'eth_requestAccounts' })
@@ -16,7 +17,8 @@ function App() {
 
         if (electionContract) {
           getProposals();
-          electionContract.owner().then(owner => {
+          Promise.all([electionContract.owner(), electionContract.voters(result[0])]).then(([owner, voter]) => {
+            setIsVoted(voter.voted);
             setIsOwner(owner.toLowerCase() === result[0]);
           });
         }
@@ -50,7 +52,7 @@ function App() {
       {proposals.map((p, key) => {
         return <div key={key}>
           {ethers.utils.parseBytes32String(p.name)}
-          <button onClick={voteHandler(key)}>Vote</button>
+          {!isVoted && <button onClick={voteHandler(key)}>Vote</button>}
         </div>
       })}
       <hr></hr>

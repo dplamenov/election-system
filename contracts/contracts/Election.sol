@@ -15,7 +15,7 @@ contract Election {
     }
 
     address public owner;
-    mapping(address => Voter) voters;
+    mapping(address => Voter) public voters;
     Proposal[] proposals;
 
     modifier isOwner() {
