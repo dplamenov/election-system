@@ -43,12 +43,13 @@ function App() {
         return <p key={p.name}>{ethers.utils.parseBytes32String(p.name)}</p>
       })}
       <hr></hr>
-      {isOwner && <div>
+      {isOwner && <>
         <form onSubmit={giveRightToVoteHandler}>
           <input type="text" placeholder="address" id="address" name="address" />
           <button>Give right</button>
         </form>
-      </div>}
+        
+      </>}
     </div>
   );
 }
