@@ -2,6 +2,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 import {useContract, useProvider} from './hooks/web3';
 import {ethers} from 'ethers';
+import Proposal from './components/Proposal';
 
 function App() {
   const electionContract = useContract('election');
@@ -27,7 +28,6 @@ function App() {
 
   const getProposals = async () => {
     const proposals = await electionContract.getProposals();
-    console.log(proposals);
     setProposals(proposals);
   };
 
@@ -38,22 +38,14 @@ function App() {
     electionContract.giveRightToVote(address);
   }
 
-  const voteHandler = (key) => {
-    return () => {
-      electionContract.vote(key).then(() => {
-        console.log(key);
-      });
-    }
-  };
+ 
 
   return (
     <div className="App">
       <h1>Proposals</h1>
       {proposals.map((p, key) => {
-        return <div key={key}>
-          {ethers.utils.parseBytes32String(p.name)}
-          {!isVoted && <button onClick={voteHandler(key)}>Vote</button>}
-        </div>
+        return <Proposal key={key} proposal={p} id={key} isVoted={isVoted}>
+        </Proposal>
       })}
       <hr></hr>
       {isOwner && <>
