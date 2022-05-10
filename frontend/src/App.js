@@ -38,14 +38,11 @@ function App() {
     electionContract.giveRightToVote(address);
   }
 
- 
-
   return (
     <div className="App">
       <h1>Proposals</h1>
       {proposals.map((p, key) => {
-        return <Proposal key={key} proposal={p} id={key} isVoted={isVoted}>
-        </Proposal>
+        return <Proposal key={key} proposal={p} id={key} isVoted={isVoted} />
       })}
       <hr></hr>
       {isOwner && <>
