@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import {useContract, useProvider} from './hooks/web3';
-import {ethers} from 'ethers';
+import Button from "./components/Button";
 import Proposal from './components/Proposal';
 
 function App() {
@@ -48,9 +48,9 @@ function App() {
       {isOwner && <>
         <form onSubmit={giveRightToVoteHandler}>
           <input type="text" placeholder="address" id="address" name="address" />
-          <button>Give right</button>
+          <Button>Give right</Button>
         </form>
-        <button>Get result</button>
+        <Button>Get result</Button>
       </>}
     </div>
   );
