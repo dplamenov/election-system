@@ -15,7 +15,7 @@ function Proposal({ proposal, id, isVoted }) {
 
   return (
     <div>
-      <h2>{ethers.utils.parseBytes32String(proposal.name)}</h2>
+      <h2 style={{display: 'inline'}}>{ethers.utils.parseBytes32String(proposal.name)}</h2>
       {!isVoted && <Button onClick={voteHandler(id)}>Vote</Button>}
     </div>
   );
