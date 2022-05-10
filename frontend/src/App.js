@@ -1,6 +1,6 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import {useContract, useProvider} from './hooks/web3';
+import {useContract} from './hooks/web3';
 import Button from "./components/Button";
 import Proposal from './components/Proposal';
 
@@ -40,12 +40,13 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Proposals</h1>
+      <h1 style={{ color: 'palevioletred' }}>Proposals</h1>
+      {isVoted && <p>already voted</p>}
       {proposals.map((p, key) => {
         return <Proposal key={key} proposal={p} id={key} isVoted={isVoted} />
       })}
-      <hr></hr>
       {isOwner && <>
+        <h2>Owner panel:</h2>
         <form onSubmit={giveRightToVoteHandler}>
           <input type="text" placeholder="address" id="address" name="address" />
           <Button>Give right</Button>
