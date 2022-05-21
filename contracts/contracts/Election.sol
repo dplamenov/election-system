@@ -17,6 +17,7 @@ contract Election {
     address public owner;
     mapping(address => Voter) public voters;
     Proposal[] proposals;
+    event Vote(Voter vote);
 
     modifier isOwner() {
         require(msg.sender == owner, "Only owner can give right to vote.");
@@ -41,6 +42,7 @@ contract Election {
         sender.voted = true;
         sender.vote = proposal;
         proposals[proposal].voteCount += 1;
+        emit Vote(sender);
     }
 
     function winningProposal() public view returns (uint256 winningProposal_) {
