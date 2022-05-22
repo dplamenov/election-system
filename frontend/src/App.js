@@ -1,30 +1,30 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import {useContract} from './hooks/web3';
+import {useContract } from './hooks/web3';
 import Button from "./components/Button";
 import Proposal from './components/Proposal';
+import { store as providerStore } from './store';
 
 function App() {
   const electionContract = useContract('election');
   const [proposals, setProposals] = useState([]);
-  const [currentAccount, setCurrentAccount] = useState()
   const [isOwner, setIsOwner] = useState(false);
   const [isVoted, setIsVoted] = useState(false); 
 
   useEffect(() => {
-    window.ethereum.request({ method: 'eth_requestAccounts' })
-      .then(result => {
-        setCurrentAccount(result[0]);
-
-        if (electionContract) {
-          getProposals();
-          Promise.all([electionContract.owner(), electionContract.voters(result[0])]).then(([owner, voter]) => {
-            setIsVoted(voter.voted);
-            setIsOwner(owner.toLowerCase() === result[0]);
-          });
-        }
+    if (electionContract) {
+      getProposals();
+      Promise.all([electionContract.owner(), electionContract.voters(providerStore.getState().address)]).then(([owner, voter]) => {
+        setIsVoted(voter.voted);
+        setIsOwner(owner.toLowerCase() === providerStore.getState().address);
       });
-  }, [])
+
+      electionContract.on('Vote', (voter) => {
+        console.log(voter);
+        setIsVoted(true);
+      });
+    }
+  }, [electionContract])
 
   const getProposals = async () => {
     const proposals = await electionContract.getProposals();
@@ -32,7 +32,6 @@ function App() {
   };
 
   const giveRightToVoteHandler = async (e) => {
-    console.log(isOwner);
     e.preventDefault();
     const {value: address} = e.target.address;
     electionContract.giveRightToVote(address);
